@@ -5,6 +5,7 @@ function App() {
   const [input, setInput] = useState(0);
   const [stockData, setStockData] = useState({});
   const [symbols, setSymbols] = useState([]);
+  const [err, setError]=useState(false);
 
   useEffect(() => {
     let symbolsString = symbols.map(item => {
@@ -34,6 +35,11 @@ function App() {
   }, [symbols]);
 
   const callInputApi = async ()=>{
+    if(input<1 || input>20){
+      setError(true);
+    }else{
+      setError(false);
+    }
     try {
       let result = await fetch('http://localhost:5000/input', {
           method: 'post',
@@ -59,8 +65,11 @@ function App() {
       <h1>Live Stock Prices</h1>
       <div>
         <span>Enter number of stocks : </span>
-        <input type='text' onChange={(e)=>setInput(e.target.value)} />
+        <input type='number' placeholder="1-20" onChange={(e)=>setInput(e.target.value)} />
         <button onClick={callInputApi}>Submit</button>
+      </div>
+      <div>
+          {err?<span style={{'color':'red'}}>Enter number between 1-20</span>:<></>}
       </div>
       {JSON.stringify(stockData).length>2?
       <ul>
